@@ -18,12 +18,12 @@ export class TodosQueryDto {
   @Type(() => Number)
   limit?: number = 10;
 
-  @ApiPropertyOptional({ default: 1, example: 1 })
+  @ApiPropertyOptional({ default: 0, example: 0 })
   @IsInt()
   @IsOptional()
-  @Min(1)
+  @Min(0)
   @Type(() => Number)
-  offset?: number = 1;
+  offset?: number = 0;
 
   @ApiPropertyOptional({ enum: SortOrder })
   @IsEnum(SortOrder)

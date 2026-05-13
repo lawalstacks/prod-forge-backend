@@ -12,6 +12,7 @@ import { LoggerService } from './logger/logger.service';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
+    cors: process.env.NODE_ENV === 'development',
   });
   const logger = app.get(LoggerService);
 
