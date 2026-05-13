@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { LoggerModule } from '../../logger/logger.module';
 import { EnvironmentModule } from '../environment/environment.module';
 import { CacheRedis } from './clients/cache.client';
 import { ThrottlerRedis } from './clients/throttler.client';
@@ -12,7 +11,7 @@ import { CacheStorage } from './storages/cache.storage';
 
 @Module({
   exports: [RedisManagerService, RedisHealthService, CacheStorage],
-  imports: [EnvironmentModule, LoggerModule],
+  imports: [EnvironmentModule],
   providers: [
     {
       provide: REDIS_THROTTLER,
