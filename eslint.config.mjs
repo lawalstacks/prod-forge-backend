@@ -3,6 +3,7 @@ import json from '@eslint/json';
 import tseslintPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import checkFile from 'eslint-plugin-check-file';
+import noOnlyTests from 'eslint-plugin-no-only-tests';
 import packageJson from 'eslint-plugin-package-json';
 import perfectionist from 'eslint-plugin-perfectionist';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
@@ -57,9 +58,11 @@ const ignores = [
   '.last-run.json',
 ];
 
-const configFiles = ['**/*.config.js', '**/*.config.ts', '.commitlintrc.js', '.lintstagedrc.js'];
+const jsFiles = ['**/*.{js,jsx,mjs,cjs}'];
 
 const tsFiles = ['**/*.{ts,tsx}'];
+
+const sourceFiles = ['**/*.{js,jsx,mjs,cjs,ts,tsx}'];
 
 const languageOptions = {
   ecmaVersion: 2024,
@@ -84,6 +87,7 @@ const customTypescriptConfig = {
     '@typescript-eslint': tseslintPlugin,
     'check-file': checkFile,
     'import/parsers': tsParser,
+    'no-only-tests': noOnlyTests,
   },
   rules: {
     '@typescript-eslint/ban-ts-comment': 'error',
@@ -145,6 +149,7 @@ const customTypescriptConfig = {
     'no-await-in-loop': 'off',
     'no-console': 'error',
     'no-debugger': 'error',
+    'no-only-tests/no-only-tests': 'error',
     'no-param-reassign': 'off',
     'no-plusplus': 'off',
     'no-return-await': 'off',
@@ -196,34 +201,28 @@ const customPackageJsonConfig = {
 };
 
 const customJsConfig = {
-  files: ['**/*.js'],
-  plugins: {
-    js,
+  files: jsFiles,
+  languageOptions: {
+    globals: {
+      ...globals.node,
+      ...globals.jest,
+    },
   },
+  ...js.configs.recommended,
 };
 
 const perfectionistConfig = {
-  files: ['**/*.{js,jsx}', '**/*.{ts,tsx}'],
+  files: sourceFiles,
   ...perfectionist.configs['recommended-natural'],
 };
 
 const regexpConfig = {
-  files: ['**/*.{js,jsx}', '**/*.{ts,tsx}'],
+  files: sourceFiles,
   ...regexpPlugin.configs['flat/recommended'],
-};
-
-const disableTypeCheckedForConfigs = {
-  files: configFiles,
-  languageOptions: {
-    parserOptions: {
-      projectService: false,
-    },
-  },
 };
 
 export default [
   { ignores },
-  disableTypeCheckedForConfigs,
   ...recommendedTypeScriptConfigs,
   prettierRecommended,
   perfectionistConfig,
