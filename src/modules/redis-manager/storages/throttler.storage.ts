@@ -1,19 +1,28 @@
 import type { ThrottlerStorageRedis } from '@nest-lab/throttler-storage-redis';
 import type { ThrottlerStorageRecord } from '@nestjs/throttler/dist/throttler-storage-record.interface';
+import type { Cluster } from 'ioredis';
 import type Redis from 'ioredis';
 
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
+import { Inject, Injectable } from '@nestjs/common';
+
+import { THROTTLER_REDIS_STORAGE } from '../di/di.types';
 
 /**
  * Hybrid Storage: Redis + Memory Fallback
  * */
+@Injectable()
 export class ThrottlerStorage implements ThrottlerStorageRedis {
-  private memory = new Map<string, ThrottlerStorageRecord>();
-  private readonly redisStorage: null | ThrottlerStorageRedisService = null;
-
-  constructor(public redis: Redis) {
-    this.redisStorage = new ThrottlerStorageRedisService(redis);
+  get redis(): Cluster | Redis {
+    return this.redisStorage.redis;
   }
+
+  private memory = new Map<string, ThrottlerStorageRecord>();
+
+  constructor(
+    @Inject(THROTTLER_REDIS_STORAGE)
+    private readonly redisStorage: ThrottlerStorageRedisService,
+  ) {}
 
   fallback(
     key: string,
@@ -68,12 +77,9 @@ export class ThrottlerStorage implements ThrottlerStorageRedis {
     blockDuration: number,
     throttlerName: string,
   ): Promise<ThrottlerStorageRecord> {
-    // Try to connect to the Redis
-    if (this.redisStorage) {
-      try {
-        return await this.redisStorage.increment(key, ttl, limit, blockDuration, throttlerName);
-      } catch {}
-    }
+    try {
+      return await this.redisStorage.increment(key, ttl, limit, blockDuration, throttlerName);
+    } catch {}
 
     // In-memory fallback
     return this.fallback(key, ttl, limit, blockDuration, throttlerName);

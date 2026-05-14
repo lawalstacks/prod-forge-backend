@@ -24,7 +24,6 @@ import { RequestTrackingMiddleware } from './modules/in-flight-requests/request-
 import { RequestTrackingService } from './modules/in-flight-requests/request-tracking.service';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { RedisManagerModule } from './modules/redis-manager/redis-manager.module';
-import { RedisManagerService } from './modules/redis-manager/redis-manager.service';
 import { ThrottlerStorage } from './modules/redis-manager/storages/throttler.storage';
 import { SentryModule } from './modules/sentry/sentry.module';
 import { ShutdownModule } from './modules/shutdown/shutdown.module';
@@ -35,12 +34,12 @@ import { VersionModule } from './modules/version/version.module';
   imports: [
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule, RedisManagerModule],
-      inject: [ConfigService, RedisManagerService],
-      useFactory: (configService: ConfigService, redisManagerService: RedisManagerService) => {
+      inject: [ConfigService, ThrottlerStorage],
+      useFactory: (configService: ConfigService, throttlerStorage: ThrottlerStorage) => {
         const config = configService.getOrThrow<ConfigType<typeof throttlerConfig>>('throttlerConfig');
 
         return {
-          storage: new ThrottlerStorage(redisManagerService.getThrottlerRedis()),
+          storage: throttlerStorage,
           throttlers: [
             {
               limit: config.throttlerLimit,
