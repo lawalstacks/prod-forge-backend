@@ -3,6 +3,7 @@ import json from '@eslint/json';
 import tseslintPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import checkFile from 'eslint-plugin-check-file';
+import importLite from 'eslint-plugin-import-lite';
 import noOnlyTests from 'eslint-plugin-no-only-tests';
 import packageJson from 'eslint-plugin-package-json';
 import perfectionist from 'eslint-plugin-perfectionist';
@@ -84,12 +85,33 @@ const customTypescriptConfig = {
     },
   },
   plugins: {
+    '@check-file': checkFile,
+    '@import-lite': importLite,
+    '@no-only-tests': noOnlyTests,
     '@typescript-eslint': tseslintPlugin,
-    'check-file': checkFile,
     'import/parsers': tsParser,
-    'no-only-tests': noOnlyTests,
   },
   rules: {
+    '@check-file/filename-naming-convention': [
+      'error',
+      {
+        'src/**/*.{ts,tsx}': 'KEBAB_CASE',
+      },
+      {
+        ignoreMiddleExtensions: true,
+      },
+    ],
+    '@check-file/folder-naming-convention': [
+      'error',
+      {
+        'src/**/': 'KEBAB_CASE',
+      },
+    ],
+
+    '@import-lite/no-default-export': 'error',
+
+    '@no-only-tests/no-only-tests': 'error',
+
     '@typescript-eslint/ban-ts-comment': 'error',
     '@typescript-eslint/ban-types': 'off',
     '@typescript-eslint/consistent-type-imports': 'error',
@@ -126,30 +148,12 @@ const customTypescriptConfig = {
     '@typescript-eslint/return-await': 'off',
 
     camelcase: ['error', { properties: 'always' }],
-
-    'check-file/filename-naming-convention': [
-      'error',
-      {
-        'src/**/*.{ts,tsx}': 'KEBAB_CASE',
-      },
-      {
-        ignoreMiddleExtensions: true,
-      },
-    ],
-    'check-file/folder-naming-convention': [
-      'error',
-      {
-        'src/**/': 'KEBAB_CASE',
-      },
-    ],
-
     'class-methods-use-this': 'off',
     'newline-before-return': 'error',
     'no-alert': 'error',
     'no-await-in-loop': 'off',
     'no-console': 'error',
     'no-debugger': 'error',
-    'no-only-tests/no-only-tests': 'error',
     'no-param-reassign': 'off',
     'no-plusplus': 'off',
     'no-return-await': 'off',

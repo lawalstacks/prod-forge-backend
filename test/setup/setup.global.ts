@@ -5,6 +5,7 @@ import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer } from '@testcontainers/redis';
 import { execSync } from 'child_process';
 
+// eslint-disable-next-line @import-lite/no-default-export
 export default async function (): Promise<void> {
   const dbContainer = await new PostgreSqlContainer('postgres:latest')
     .withDatabase('test')

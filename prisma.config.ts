@@ -9,6 +9,7 @@ config({
   path: [join(process.cwd(), '.env'), join(process.cwd(), '.env.common')],
 });
 
+// eslint-disable-next-line @import-lite/no-default-export
 export default defineConfig({
   datasource: {
     url: getDatabaseUrl(),

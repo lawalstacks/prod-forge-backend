@@ -26,6 +26,8 @@ The second layer introduces stricter rules through **ESLint**.
 While ESLint can be configured in many different ways, this project uses the following plugins:
 
 - `typescript-eslint` - TypeScript-specific linting rules
+- `eslint-plugin-import-lite` - default export in modules are prohibited
+- `eslint-plugin-no-only-tests` - only statement in tests are prohibited
 - `eslint-plugin-regexp` - validation and best practices for regular expressions
 - `eslint-plugin-prettier` - integration with Prettier
 - `eslint-plugin-perfectionist` - sorting of imports and object properties
