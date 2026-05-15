@@ -1,15 +1,13 @@
 import { isObject } from '../../common/utils/objects';
 
 export function frontendMapper(details: unknown): unknown {
-  if (isObject(details) && 'driverAdapterError' in details) {
-    if (isObject(details.driverAdapterError) && 'cause' in details.driverAdapterError) {
-      if (isObject(details.driverAdapterError.cause) && 'message' in details.driverAdapterError.cause) {
-        if (typeof details.driverAdapterError.cause.message === 'string') {
-          return details.driverAdapterError.cause.message;
-        }
-      }
-    }
-  }
+  const message =
+    isObject(details) &&
+    isObject(details.driverAdapterError) &&
+    isObject(details.driverAdapterError.cause) &&
+    typeof details.driverAdapterError.cause.message === 'string'
+      ? details.driverAdapterError.cause.message
+      : undefined;
 
-  return details;
+  return message ?? details;
 }

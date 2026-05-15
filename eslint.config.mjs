@@ -9,6 +9,8 @@ import packageJson from 'eslint-plugin-package-json';
 import perfectionist from 'eslint-plugin-perfectionist';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import * as regexpPlugin from 'eslint-plugin-regexp';
+import sonar from 'eslint-plugin-sonarjs';
+import unicorn from 'eslint-plugin-unicorn';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -88,7 +90,9 @@ const customTypescriptConfig = {
     '@check-file': checkFile,
     '@import-lite': importLite,
     '@no-only-tests': noOnlyTests,
+    '@sonar': sonar,
     '@typescript-eslint': tseslintPlugin,
+    '@unicorn': unicorn,
     'import/parsers': tsParser,
   },
   rules: {
@@ -111,6 +115,16 @@ const customTypescriptConfig = {
     '@import-lite/no-default-export': 'error',
 
     '@no-only-tests/no-only-tests': 'error',
+
+    '@sonar/cognitive-complexity': ['error', 20],
+    '@sonar/no-collapsible-if': 'error',
+    '@sonar/no-identical-expressions': 'error',
+    '@sonar/no-identical-functions': 'error',
+    '@sonar/no-inverted-boolean-check': 'error',
+    '@sonar/no-redundant-boolean': 'error',
+    '@sonar/no-small-switch': 'error',
+    '@sonar/no-unused-collection': 'error',
+    '@sonar/prefer-immediate-return': 'error',
 
     '@typescript-eslint/ban-ts-comment': 'error',
     '@typescript-eslint/ban-types': 'off',
@@ -147,8 +161,27 @@ const customTypescriptConfig = {
     ],
     '@typescript-eslint/return-await': 'off',
 
+    '@unicorn/no-useless-undefined': ['error', { checkArguments: false, checkArrowFunctionBody: false }],
+    '@unicorn/prefer-array-flat': 'error',
+    '@unicorn/prefer-modern-dom-apis': 'error',
+    '@unicorn/prefer-node-protocol': 'error',
+    '@unicorn/prefer-string-starts-ends-with': 'error',
+    '@unicorn/throw-new-error': 'error',
+
+    'array-callback-return': [
+      'error',
+      {
+        allowImplicit: true,
+      },
+    ],
     camelcase: ['error', { properties: 'always' }],
     'class-methods-use-this': 'off',
+    'getter-return': [
+      'error',
+      {
+        allowImplicit: true,
+      },
+    ],
     'newline-before-return': 'error',
     'no-alert': 'error',
     'no-await-in-loop': 'off',
