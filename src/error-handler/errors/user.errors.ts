@@ -19,16 +19,3 @@ export class UserIsNotAuthorizedError extends BaseError<void> {
     );
   }
 }
-
-export class UserNotFoundError extends BaseError<{ id: string }> {
-  static code = ErrorCodes.USER_NOT_FOUND;
-  static domain = ErrorCategory.DOMAIN;
-  static message = 'User not found';
-  static status = HttpStatus.NOT_FOUND;
-
-  constructor(id: string) {
-    super(UserNotFoundError.message, UserNotFoundError.code, UserNotFoundError.domain, UserNotFoundError.status, {
-      id,
-    });
-  }
-}
