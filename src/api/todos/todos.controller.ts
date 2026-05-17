@@ -7,8 +7,10 @@ import type { UserInterface } from '../../shared/interfaces/user.interface';
 import { ApiEmpty, ApiErrors, ApiOk, ApiPaginated } from '../../common/decorators/swagger.decorators';
 import { User } from '../../common/decorators/user.decorator';
 import { AuthGuard } from '../../common/guards';
+import { InternalServerError } from '../../error-handler/errors/common.errors';
 import { DtoValidationErrors } from '../../error-handler/errors/dto-validation.errors';
 import { TodoNotFoundError } from '../../error-handler/errors/todo.errors';
+import { UserIsNotAuthorizedError } from '../../error-handler/errors/user.errors';
 import { TodosService } from '../../features/todos/todos.service';
 import { TodosQueryDto } from './dtos/queries/todos-query.dto';
 import { CreateTodoDto } from './dtos/requests/create-todo.dto';
@@ -24,7 +26,7 @@ import { TodosResponseDto } from './dtos/responses/todos-response.dto';
 export class TodosController {
   constructor(private readonly todoService: TodosService) {}
 
-  @ApiErrors(DtoValidationErrors)
+  @ApiErrors(DtoValidationErrors, UserIsNotAuthorizedError, InternalServerError)
   @ApiOk(TodoResponseDto, {
     access: true,
     description: 'Create new todo item for user',
@@ -40,6 +42,7 @@ export class TodosController {
     });
   }
 
+  @ApiErrors(DtoValidationErrors, UserIsNotAuthorizedError, InternalServerError)
   @ApiPaginated(TodoResponseDto, {
     access: true,
     description: 'Get all todo items for user',
@@ -55,7 +58,7 @@ export class TodosController {
     });
   }
 
-  @ApiErrors(DtoValidationErrors, TodoNotFoundError)
+  @ApiErrors(TodoNotFoundError, UserIsNotAuthorizedError, InternalServerError)
   @ApiOk(TodoResponseDto, {
     access: true,
     description: 'Get todo item for user',
@@ -76,13 +79,14 @@ export class TodosController {
     description: 'Todo was successfully deleted',
     title: 'Remove Todo',
   })
+  @ApiErrors(TodoNotFoundError, UserIsNotAuthorizedError, InternalServerError)
   @Delete(':id')
   @UseGuards(AuthGuard)
   async remove(@Param('id') id: string): Promise<void> {
     await this.todoService.remove(id);
   }
 
-  @ApiErrors(DtoValidationErrors, TodoNotFoundError)
+  @ApiErrors(DtoValidationErrors, TodoNotFoundError, UserIsNotAuthorizedError, InternalServerError)
   @ApiOk(TodoResponseDto, {
     access: true,
     description: 'Update todo item for user',
