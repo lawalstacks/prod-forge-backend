@@ -14,12 +14,13 @@ const makeRedisMock = (): Record<string, jest.Mock> => ({
 describe('CacheStorage', () => {
   let storage: CacheStorage;
   let redisMock: ReturnType<typeof makeRedisMock>;
+  let logger: { error: jest.Mock; warn: jest.Mock };
 
   beforeEach(async () => {
     redisMock = makeRedisMock();
 
     const redisManager = { getCacheRedis: jest.fn().mockReturnValue(redisMock) };
-    const logger = { error: jest.fn() };
+    logger = { error: jest.fn(), warn: jest.fn() };
 
     const module = await Test.createTestingModule({
       providers: [
@@ -33,16 +34,18 @@ describe('CacheStorage', () => {
   });
 
   describe('negative cases', () => {
-    it('del swallows redis error', async () => {
+    it('del swallows redis error and logs warning', async () => {
       redisMock.del.mockRejectedValue(new Error('redis error'));
 
       await expect(storage.del('key')).resolves.toBeUndefined();
+      expect(logger.warn).toHaveBeenCalled();
     });
 
-    it('delByPattern swallows redis error', async () => {
+    it('delByPattern swallows redis error and logs warning', async () => {
       redisMock.keys.mockRejectedValue(new Error('redis error'));
 
       await expect(storage.delByPattern('pattern*')).resolves.toBeUndefined();
+      expect(logger.warn).toHaveBeenCalled();
     });
 
     it('get returns null when key does not exist', async () => {
@@ -51,16 +54,18 @@ describe('CacheStorage', () => {
       expect(await storage.get('missing')).toBeNull();
     });
 
-    it('get returns null when redis throws', async () => {
+    it('get returns null and logs warning when redis throws', async () => {
       redisMock.get.mockRejectedValue(new Error('redis error'));
 
       expect(await storage.get('key')).toBeNull();
+      expect(logger.warn).toHaveBeenCalled();
     });
 
-    it('set swallows redis error', async () => {
+    it('set swallows redis error and logs warning', async () => {
       redisMock.set.mockRejectedValue(new Error('redis error'));
 
       await expect(storage.set('key', 'value')).resolves.toBeUndefined();
+      expect(logger.warn).toHaveBeenCalled();
     });
 
     it('delByPattern skips del when keys array is empty', async () => {

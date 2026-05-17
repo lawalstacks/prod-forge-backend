@@ -4,6 +4,23 @@ import { ErrorCategory } from '../constants/error-category';
 import { ErrorCodes } from '../constants/error.codes';
 import { BaseError } from './_base.error';
 
+export class DatabaseForeignKeyError extends BaseError<Record<string, unknown>> {
+  static code = ErrorCodes.DATABASE_ERROR;
+  static domain = ErrorCategory.INFRASTRUCTURE;
+  static message = 'Foreign Key Constraint Failed';
+  static status = HttpStatus.CONFLICT;
+
+  constructor(message: string, details?: Record<string, unknown>) {
+    super(
+      message || DatabaseForeignKeyError.message,
+      DatabaseForeignKeyError.code,
+      DatabaseForeignKeyError.domain,
+      DatabaseForeignKeyError.status,
+      details,
+    );
+  }
+}
+
 export class DatabaseNotFoundError extends BaseError<Record<string, unknown>> {
   static code = ErrorCodes.DATABASE_ERROR;
   static domain = ErrorCategory.INFRASTRUCTURE;

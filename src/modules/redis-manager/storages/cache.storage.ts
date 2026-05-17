@@ -18,8 +18,9 @@ export class CacheStorage {
   async del(key: string): Promise<void> {
     try {
       await this.redis.del(key);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {}
+    } catch {
+      this.loggerService.warn({ ctx: CacheStorage.name, msg: `Cache del failed for key "${key}"` });
+    }
   }
 
   async delByPattern(pattern: string): Promise<void> {
@@ -28,8 +29,9 @@ export class CacheStorage {
       if (keys.length) {
         await this.redis.del(keys);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {}
+    } catch {
+      this.loggerService.warn({ ctx: CacheStorage.name, msg: `Cache delByPattern failed for pattern "${pattern}"` });
+    }
   }
 
   async get<T>(key: string): Promise<null | T> {
@@ -37,8 +39,9 @@ export class CacheStorage {
       const data = await this.redis.get(key);
 
       return data ? (JSON.parse(data) as T) : null;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {}
+    } catch {
+      this.loggerService.warn({ ctx: CacheStorage.name, msg: `Cache get failed for key "${key}"` });
+    }
 
     return null;
   }
@@ -52,7 +55,8 @@ export class CacheStorage {
       } else {
         await this.redis.set(key, data);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {}
+    } catch {
+      this.loggerService.warn({ ctx: CacheStorage.name, msg: `Cache set failed for key "${key}"` });
+    }
   }
 }

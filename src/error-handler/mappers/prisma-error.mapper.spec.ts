@@ -2,6 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 
 import { PrismaClientKnownRequestError } from '../../../database-manager/generated/internal/prismaNamespace';
 import {
+  DatabaseForeignKeyError,
   DatabaseNotFoundError,
   DatabaseUniqueConstraintError,
   DatabaseValidationError,
@@ -36,6 +37,12 @@ describe('mapPrismaError', () => {
 
     it('returns null for an unrecognised Prisma code (P2001)', () => {
       const err = makePrismaError('P2001');
+
+      expect(mapPrismaError(err)).toBeNull();
+    });
+
+    it('returns null for an unrecognised Prisma code (P2016)', () => {
+      const err = makePrismaError('P2016');
 
       expect(mapPrismaError(err)).toBeNull();
     });
@@ -86,6 +93,51 @@ describe('mapPrismaError', () => {
 
       expect(result?.details).toEqual(meta);
     });
+
+    it('maps P2003 to DatabaseForeignKeyError with CONFLICT status', () => {
+      const err = makePrismaError('P2003', { fieldName: 'userId' });
+
+      const result = mapPrismaError(err);
+
+      expect(result).toBeInstanceOf(DatabaseForeignKeyError);
+      expect(result?.status).toBe(HttpStatus.CONFLICT);
+    });
+
+    it('maps P2003 and passes meta as details', () => {
+      const meta = { fieldName: 'userId' };
+      const err = makePrismaError('P2003', meta);
+
+      const result = mapPrismaError(err);
+
+      expect(result?.details).toEqual(meta);
+    });
+
+    it('maps P2000 to DatabaseValidationError with BAD_REQUEST status', () => {
+      const err = makePrismaError('P2000');
+
+      const result = mapPrismaError(err);
+
+      expect(result).toBeInstanceOf(DatabaseValidationError);
+      expect(result?.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('maps P2006 to DatabaseValidationError with BAD_REQUEST status', () => {
+      const err = makePrismaError('P2006');
+
+      const result = mapPrismaError(err);
+
+      expect(result).toBeInstanceOf(DatabaseValidationError);
+      expect(result?.status).toBe(HttpStatus.BAD_REQUEST);
+    });
+
+    it('maps P2011 to DatabaseValidationError with BAD_REQUEST status', () => {
+      const err = makePrismaError('P2011');
+
+      const result = mapPrismaError(err);
+
+      expect(result).toBeInstanceOf(DatabaseValidationError);
+      expect(result?.status).toBe(HttpStatus.BAD_REQUEST);
+    });
   });
 });
 
@@ -115,6 +167,24 @@ describe('DatabaseValidationError', () => {
       const err = new DatabaseValidationError('');
 
       expect(err.message).toBe(DatabaseValidationError.message);
+    });
+  });
+});
+
+describe('DatabaseForeignKeyError', () => {
+  describe('negative cases', () => {
+    it('falls back to static message when empty string is provided', () => {
+      const err = new DatabaseForeignKeyError('');
+
+      expect(err.message).toBe(DatabaseForeignKeyError.message);
+    });
+  });
+
+  describe('positive cases', () => {
+    it('uses provided message when non-empty', () => {
+      const err = new DatabaseForeignKeyError('FK violation');
+
+      expect(err.message).toBe('FK violation');
     });
   });
 });

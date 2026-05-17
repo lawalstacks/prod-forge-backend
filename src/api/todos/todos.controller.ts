@@ -8,7 +8,7 @@ import { ApiEmpty, ApiErrors, ApiOk, ApiPaginated } from '../../common/decorator
 import { User } from '../../common/decorators/user.decorator';
 import { AuthGuard } from '../../common/guards';
 import { DtoValidationErrors } from '../../error-handler/errors/dto-validation.errors';
-import { UserNotFoundError } from '../../error-handler/errors/user.errors';
+import { TodoNotFoundError } from '../../error-handler/errors/todo.errors';
 import { TodosService } from '../../features/todos/todos.service';
 import { TodosQueryDto } from './dtos/queries/todos-query.dto';
 import { CreateTodoDto } from './dtos/requests/create-todo.dto';
@@ -55,7 +55,7 @@ export class TodosController {
     });
   }
 
-  @ApiErrors(DtoValidationErrors, UserNotFoundError)
+  @ApiErrors(DtoValidationErrors, TodoNotFoundError)
   @ApiOk(TodoResponseDto, {
     access: true,
     description: 'Get todo item for user',
@@ -82,7 +82,7 @@ export class TodosController {
     await this.todoService.remove(id);
   }
 
-  @ApiErrors(DtoValidationErrors, UserNotFoundError)
+  @ApiErrors(DtoValidationErrors, TodoNotFoundError)
   @ApiOk(TodoResponseDto, {
     access: true,
     description: 'Update todo item for user',
