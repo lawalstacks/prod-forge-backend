@@ -11,6 +11,7 @@ import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import * as regexpPlugin from 'eslint-plugin-regexp';
 import sonar from 'eslint-plugin-sonarjs';
 import unicorn from 'eslint-plugin-unicorn';
+import { globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -59,7 +60,7 @@ const ignores = [
   'database-manager/migrations',
   'grafana/**',
   'ecs/**',
-  '.last-run.json',
+  '**/.last-run.json',
 ];
 
 const jsFiles = ['**/*.{js,jsx,mjs,cjs}'];
@@ -260,7 +261,7 @@ const regexpConfig = {
 };
 
 export default [
-  { ignores },
+  globalIgnores(ignores),
   ...recommendedTypeScriptConfigs,
   prettierRecommended,
   perfectionistConfig,
