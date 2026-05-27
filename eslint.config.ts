@@ -1,3 +1,7 @@
+/// <reference types="node" />
+import './eslint-plugin.d';
+import type { Linter } from 'eslint';
+
 import js from '@eslint/js';
 import json from '@eslint/json';
 import tseslintPlugin from '@typescript-eslint/eslint-plugin';
@@ -84,8 +88,8 @@ const customTypescriptConfig = {
     ...languageOptions,
     parser: tsParser,
     parserOptions: {
-      projectService: true,
-      tsconfigRootDir: import.meta.dirname,
+      project: './tsconfig.eslint.json',
+      tsconfigRootDir: __dirname,
     },
   },
   plugins: {
@@ -217,14 +221,11 @@ const recommendedTypeScriptConfigs = [
   })),
 ];
 
-const jsonCustomConfig = {
+const jsonCustomConfig: Linter.Config = {
+  ...json.configs.recommended,
   files: ['**/*.json'],
   ignores: ['**/*-lock.json', 'package.json'],
   language: 'json/json',
-  plugins: {
-    json,
-  },
-  ...json.configs.recommended,
 };
 
 const customPackageJsonConfig = {
@@ -260,6 +261,20 @@ const regexpConfig = {
   ...regexpPlugin.configs['flat/recommended'],
 };
 
+const disableDefaultExportBlockingForStorybook = {
+  files: [
+    '**/*.stories.@(js|jsx|ts|tsx|mdx)',
+    '**/playwright*.config.ts',
+    '**/.storybook/**',
+    '**/vite.config.ts',
+    '**/vitest.config.ts',
+    '**/eslint.config.ts',
+  ],
+  rules: {
+    '@import-lite/no-default-export': 'off',
+  },
+};
+
 export default [
   globalIgnores(ignores),
   ...recommendedTypeScriptConfigs,
@@ -272,4 +287,5 @@ export default [
   customPackageJsonConfig,
   packageJson.configs.stylistic,
   customJsConfig,
+  disableDefaultExportBlockingForStorybook,
 ];
