@@ -6,6 +6,7 @@ import js from '@eslint/js';
 import json from '@eslint/json';
 import tseslintPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
+import gitignore from 'eslint-config-flat-gitignore';
 import checkFile from 'eslint-plugin-check-file';
 import importLite from 'eslint-plugin-import-lite';
 import noOnlyTests from 'eslint-plugin-no-only-tests';
@@ -15,57 +16,8 @@ import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import * as regexpPlugin from 'eslint-plugin-regexp';
 import sonar from 'eslint-plugin-sonarjs';
 import unicorn from 'eslint-plugin-unicorn';
-import { globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-
-const ignores = [
-  '.idea',
-  '**/*.d.ts',
-  '*.d.ts',
-  'node_modules',
-  'logs',
-  '*.log',
-  'lib-cov/',
-  'coverage/',
-  'coverage-e2e/',
-  'NO_COMMIT/',
-  'test-reports/**',
-  'docs/*',
-  'build/*',
-  'lib/*',
-  'dist/*',
-  '*.css',
-  '*.scss',
-  '*.less',
-  '*.ico',
-  '*.jpg',
-  '*.jpeg',
-  '*.png',
-  '*.svg',
-  '*.bmp',
-  '*.gif',
-  '*.webp',
-  '*.woff',
-  '*.woff2',
-  '*.txt',
-  '*.mdx',
-  '*.md',
-  '*.ejs',
-  '*.hbs',
-  '*.jade',
-  '*.html',
-  'docs/',
-  'public/',
-  'locales/',
-  'src/locales/',
-  'seo_report',
-  'database-manager/generated',
-  'database-manager/migrations',
-  'grafana/**',
-  'ecs/**',
-  '**/.last-run.json',
-];
 
 const jsFiles = ['**/*.{js,jsx,mjs,cjs}'];
 
@@ -276,7 +228,9 @@ const disableDefaultExportBlockingForStorybook = {
 };
 
 export default [
-  globalIgnores(ignores),
+  gitignore({
+    files: ['.eslintflatignore'],
+  }),
   ...recommendedTypeScriptConfigs,
   prettierRecommended,
   perfectionistConfig,
