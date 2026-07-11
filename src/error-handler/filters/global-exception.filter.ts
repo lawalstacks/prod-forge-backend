@@ -9,7 +9,6 @@ import { sentryConfig } from '../../config/sentry.config';
 import { HEALTH_ENDPOINT } from '../../constants/url.contants';
 import { LoggerService } from '../../logger/logger.service';
 import { BaseError } from '../errors/_base.error';
-import { HttpExceptionError } from '../errors/http-exception.error';
 import { InternalServerError } from '../errors/common.errors';
 import { frontendMapper } from '../mappers/frontend.mapper';
 import { mapPrismaError } from '../mappers/prisma-error.mapper';
@@ -48,7 +47,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     // 3) Nest HttpException fallback (not show details to user)
     if (!error && exception instanceof HttpException) {
-      error = new InternalServerError();
+      error = new HttpExceptionError(exception.getStatus());
     }
 
     // 4) Unknown error (not show details to user)
